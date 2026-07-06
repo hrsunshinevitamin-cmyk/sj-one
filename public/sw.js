@@ -1,4 +1,1 @@
-const CACHE_NAME="sj-one-production-v3-1";
-const ASSETS=["/","/index.html","/manifest.webmanifest","/icon-192.png","/icon-512.png","/sourcing.html"];
-self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(ASSETS))));
-self.addEventListener("fetch",e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||caches.match("/")))));
+const CACHE_NAME="sj-one-production-v3-2";const ASSETS=["/","/index.html","/manifest.webmanifest","/icon-192.png","/icon-512.png","/sourcing.html"];self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(ASSETS))));self.addEventListener("fetch",e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||caches.match("/"))))});

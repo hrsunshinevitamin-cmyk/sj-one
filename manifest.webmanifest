@@ -1,7 +1,7 @@
 {
   "name": "SJ ONE Production",
   "short_name": "SJ ONE",
-  "description": "헤드헌팅·투자·개인비서 통합 OS",
+  "description": "헤드헌팅·후보·소싱·투자·개인비서 통합 대시보드",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0B0E13",
