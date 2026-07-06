@@ -1,1 +1,391 @@
-<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SJ Sourcing Book</title><style>body{margin:0;padding:18px;background:#F6F7F5;color:#111;font-family:system-ui,Apple SD Gothic Neo,Noto Sans KR,sans-serif}.card{background:white;border:1px solid #ddd;border-radius:16px;padding:16px;margin-bottom:12px}h1{margin:0 0 12px}.q{font-family:monospace;background:#111;color:#F2B84B;border-radius:10px;padding:12px;white-space:pre-wrap}button{border:0;border-radius:10px;background:#111;color:white;padding:10px 12px;font-weight:800}</style></head><body><h1>SJ 소싱 루트북</h1><div class="card"><b>반도체 품질</b><div class="q">site:linkedin.com/in 반도체 품질 QA QC 수율 FMEA 8D</div><button onclick="navigator.clipboard.writeText('site:linkedin.com/in 반도체 품질 QA QC 수율 FMEA 8D')">복사</button></div><div class="card"><b>장비 SW</b><div class="q">site:linkedin.com/in C# PLC Motion Vision 반도체 장비</div><button onclick="navigator.clipboard.writeText('site:linkedin.com/in C# PLC Motion Vision 반도체 장비')">복사</button></div><div class="card"><b>해외영업</b><div class="q">site:linkedin.com/in semiconductor sales 해외영업 장비 소재</div><button onclick="navigator.clipboard.writeText('site:linkedin.com/in semiconductor sales 해외영업 장비 소재')">복사</button></div></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SJ 소싱 루트북 — 직무별 X-ray 검색 콘솔</title>
+<style>
+  :root{
+    --paper:#F6F7F5; --card:#FFFFFF; --ink:#1B2422; --sub:#5A6663;
+    --radar:#0E6E5C; --radar-soft:#E3F0EC; --line:#DDE3E0;
+    --amber:#9A6A1F; --amber-soft:#F5ECDD; --mono-bg:#20302C; --mono-fg:#D7E8E2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.6; padding-bottom:80px;
+  }
+  header{
+    background:var(--ink); color:#EDF3F1; padding:28px 20px 22px;
+  }
+  header .wrap{max-width:880px; margin:0 auto;}
+  header h1{font-size:1.5rem; letter-spacing:-0.02em;}
+  header h1 span{color:#7FC7B4;}
+  header p{color:#A9BBB6; font-size:0.88rem; margin-top:6px;}
+  .formula{
+    max-width:880px; margin:0 auto; background:var(--radar-soft);
+    border:1px solid var(--radar); border-radius:10px; padding:14px 18px;
+    margin-top:-14px; position:relative; font-size:0.92rem;
+  }
+  .formula b{color:var(--radar);}
+  nav{
+    position:sticky; top:0; z-index:10; background:rgba(246,247,245,0.96);
+    backdrop-filter:blur(4px); border-bottom:1px solid var(--line);
+    padding:10px 20px; overflow-x:auto; white-space:nowrap;
+  }
+  nav .wrap{max-width:880px; margin:0 auto;}
+  nav a{
+    display:inline-block; padding:6px 14px; margin-right:6px; border-radius:999px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    text-decoration:none; font-size:0.85rem; font-weight:600;
+  }
+  nav a:hover{border-color:var(--radar); color:var(--radar);}
+  main{max-width:880px; margin:0 auto; padding:8px 20px;}
+  section{margin-top:38px; scroll-margin-top:64px;}
+  section > h2{
+    font-size:1.15rem; letter-spacing:-0.01em; display:flex; align-items:baseline; gap:10px;
+    border-bottom:2px solid var(--ink); padding-bottom:8px;
+  }
+  section > h2 .hint{font-size:0.8rem; color:var(--sub); font-weight:500;}
+  .insight{
+    margin-top:12px; padding:12px 16px; background:var(--card);
+    border-left:4px solid var(--radar); border-radius:0 8px 8px 0;
+    font-size:0.9rem; color:var(--ink);
+  }
+  .route{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; margin-top:14px;
+  }
+  .route-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .route-head h3{font-size:0.98rem;}
+  .tag{
+    font-size:0.7rem; font-weight:700; padding:2px 9px; border-radius:999px;
+    background:var(--radar-soft); color:var(--radar); border:1px solid var(--radar);
+  }
+  .tag.pdfy{background:var(--amber-soft); color:var(--amber); border-color:var(--amber);}
+  .route p.why{font-size:0.85rem; color:var(--sub); margin-top:5px;}
+  .q{
+    display:flex; align-items:stretch; gap:8px; margin-top:10px;
+  }
+  .q code{
+    flex:1; display:block; background:var(--mono-bg); color:var(--mono-fg);
+    font-family:'JetBrains Mono',Consolas,'Courier New',monospace; font-size:0.82rem;
+    padding:10px 12px; border-radius:8px; overflow-x:auto; white-space:nowrap;
+  }
+  .q code .ph{color:#F2C879; font-style:italic;}
+  .btns{display:flex; flex-direction:column; gap:6px;}
+  .btns button, .btns a{
+    font-size:0.75rem; font-weight:700; padding:6px 12px; border-radius:7px;
+    border:1px solid var(--line); background:var(--paper); color:var(--ink);
+    cursor:pointer; text-decoration:none; text-align:center; font-family:inherit;
+  }
+  .btns a.go{background:var(--radar); border-color:var(--radar); color:#fff;}
+  .btns a.go:hover{background:#0B5A4B;}
+  .btns button:hover{border-color:var(--radar); color:var(--radar);}
+  .btns button.ok{background:var(--radar-soft); border-color:var(--radar); color:var(--radar);}
+  .direct{
+    display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;
+  }
+  .direct a{
+    font-size:0.82rem; font-weight:600; padding:7px 13px; border-radius:8px;
+    background:var(--paper); border:1px solid var(--line); color:var(--ink); text-decoration:none;
+  }
+  .direct a:hover{border-color:var(--radar); color:var(--radar);}
+  .note{font-size:0.8rem; color:var(--sub); margin-top:8px;}
+  footer{max-width:880px; margin:50px auto 0; padding:0 20px; font-size:0.78rem; color:var(--sub);}
+  @media (max-width:560px){
+    .q{flex-direction:column;}
+    .btns{flex-direction:row;}
+    .btns button,.btns a{flex:1;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>SJ 소싱 루트북 <span>— 플랫폼 밖에서 후보를 캐는 직무별 검색 콘솔</span></h1>
+    <p>사람인·리멤버는 모두가 퍼가는 우물. 이 문서는 그 밖의 루트만 담는다. [검색 실행] 클릭 = 구글 검색 즉시 실행.</p>
+  </div>
+</header>
+
+<div class="formula">
+  <b>X-ray 공식</b> = site:(공개 프로필이 있는 곳) + <b>도메인 은어</b>(TC본더, EtherCAT, Halcon처럼 일반인이 안 쓰는 단어일수록 정확) + <b>노이즈 제거</b>(-채용 -구인 -학원).
+  <span style="color:var(--amber)">노란 이탤릭</span>은 자리표시자 — 복사 후 회사명/직무를 바꿔 넣을 것.
+</div>
+
+<nav><div class="wrap">
+  <a href="#tech">기술직</a>
+  <a href="#sales">영업</a>
+  <a href="#finance">재무회계</a>
+  <a href="#plan">기획</a>
+  <a href="#purchase">구매/SCM</a>
+  <a href="#mfg">제조/생산/품질</a>
+  <a href="#common">공통 원천</a>
+  <a href="#ops">연산자 치트</a>
+</div></nav>
+
+<main>
+
+<!-- ══════════ 기술직 ══════════ -->
+<section id="tech">
+  <h2>기술직 <span class="hint">S/W · 비전 · 전장제어 · 기구설계</span></h2>
+  <div class="insight">기술직은 <b>아웃풋이 인터넷에 남는 유일한 직군</b>이다 — 코드, 블로그, 특허, 발표자료. 플랫폼에 이력서가 없어도 흔적은 있다.</div>
+
+  <div class="route">
+    <div class="route-head"><h3>로켓펀치 X-ray</h3><span class="tag">공개 프로필</span></div>
+    <p class="why">프로필이 공개 URL이라 구글에 그대로 잡힌다. IT 성향이지만 장비사 S/W·비전 인력도 상당수.</p>
+    <div class="q"><code>site:rocketpunch.com "머신비전" 반도체</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Arocketpunch.com+%22%EB%A8%B8%EC%8B%A0%EB%B9%84%EC%A0%84%22+%EB%B0%98%EB%8F%84%EC%B2%B4">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:rocketpunch.com "PLC" OR "모션제어" 장비</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Arocketpunch.com+%22PLC%22+OR+%22%EB%AA%A8%EC%85%98%EC%A0%9C%EC%96%B4%22+%EC%9E%A5%EB%B9%84">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>깃허브 X-ray</h3><span class="tag">공개 프로필</span></div>
+    <p class="why">자동화 S/W 후보는 사람인엔 없어도 깃허브엔 있다. 프로필에 소속·이메일 기재가 흔하고, 저장소 주제로 도메인 집중도(박화범 룰)까지 사전 검증된다.</p>
+    <div class="q"><code>site:github.com "machine vision" OR "halcon" korea</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Agithub.com+%22machine+vision%22+OR+%22halcon%22+korea">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:github.com "motion control" OR "EtherCAT" korea</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Agithub.com+%22motion+control%22+OR+%22EtherCAT%22+korea">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>기술블로그 X-ray (velog · 티스토리)</h3><span class="tag">커뮤니티/블로그</span></div>
+    <p class="why">PLC·서보·비전을 블로그에 정리하는 사람 = 그 일을 실제로 하는 사람. 글 몇 개로 실력 검증 + "글 잘 봤습니다" 접근 명분까지 확보.</p>
+    <div class="q"><code>site:velog.io "EtherCAT" OR "서보제어"</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Avelog.io+%22EtherCAT%22+OR+%22%EC%84%9C%EB%B3%B4%EC%A0%9C%EC%96%B4%22">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:tistory.com "머신비전" "반도체 장비" -채용 -강의</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Atistory.com+%22%EB%A8%B8%EC%8B%A0%EB%B9%84%EC%A0%84%22+%22%EB%B0%98%EB%8F%84%EC%B2%B4+%EC%9E%A5%EB%B9%84%22+-%EC%B1%84%EC%9A%A9+-%EA%B0%95%EC%9D%98">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>PDF X-ray — 발표자료·기술자료 속 실명</h3><span class="tag pdfy">PDF 실명</span></div>
+    <p class="why">학회 발표자료·전시회 세미나 PDF에 작성자 실명+소속이 박혀 있다. 발표자 = 회사가 대외에 내보낼 만큼 인정받는 에이스.</p>
+    <div class="q"><code>"TC본더" OR "다이본더" filetype:pdf 개발 OR 발표</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=%22TC%EB%B3%B8%EB%8D%94%22+OR+%22%EB%8B%A4%EC%9D%B4%EB%B3%B8%EB%8D%94%22+filetype%3Apdf+%EA%B0%9C%EB%B0%9C+OR+%EB%B0%9C%ED%91%9C">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>"HBM" 패키징 filetype:pdf site:*.co.kr</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=%22HBM%22+%ED%8C%A8%ED%82%A4%EC%A7%95+filetype%3Apdf+site%3A*.co.kr">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>링크드인 X-ray (은어 조합)</h3><span class="tag">공개 프로필</span></div>
+    <p class="why">링크드인 내부 검색의 제한·필터 밖 프로필이 구글에서 잡힌다. 은어가 구체적일수록 명중률 상승.</p>
+    <div class="q"><code>site:linkedin.com/in "본더" OR "핸들러" 제어</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%EB%B3%B8%EB%8D%94%22+OR+%22%ED%95%B8%EB%93%A4%EB%9F%AC%22+%EC%A0%9C%EC%96%B4">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+  <p class="note">▶ 2단계 조합: 여기서 나온 <b>이름</b>을 리멤버·링크드인에서 역검색해 연락처를 붙인다. 이 조합이 나만의 루트가 된다.</p>
+</section>
+
+<!-- ══════════ 영업 ══════════ -->
+<section id="sales">
+  <h2>영업 <span class="hint">해외영업 · 국내영업 · 기술영업</span></h2>
+  <div class="insight">영업은 <b>무대에 서는 직무</b>다. 전시회 부스, 세미나 연단, 업계지 기사에서 실명이 노출된다 — 코드는 안 남기지만 얼굴과 이름은 남긴다.</div>
+
+  <div class="route">
+    <div class="route-head"><h3>링크드인 X-ray — 해외영업의 본진</h3><span class="tag">공개 프로필</span></div>
+    <p class="why">해외영업은 직무 특성상 링크드인 가입률이 전 직군 중 최고. 국내 플랫폼보다 여기가 원천이다.</p>
+    <div class="q"><code>site:linkedin.com/in "해외영업" 반도체 장비</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%ED%95%B4%EC%99%B8%EC%98%81%EC%97%85%22+%EB%B0%98%EB%8F%84%EC%B2%B4+%EC%9E%A5%EB%B9%84">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:linkedin.com/in "overseas sales" semiconductor equipment korea</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22overseas+sales%22+semiconductor+equipment+korea">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:linkedin.com/in "기술영업" 소재 OR 부품 OR 장비</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%EA%B8%B0%EC%88%A0%EC%98%81%EC%97%85%22+%EC%86%8C%EC%9E%AC+OR+%EB%B6%80%ED%92%88+OR+%EC%9E%A5%EB%B9%84">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>업계지 실명 인용 — 디일렉 · KIPOST</h3><span class="tag pdfy">기사 실명</span></div>
+    <p class="why">업계지는 기사에서 "○○사 해외영업 담당 ○○○ 이사" 식으로 실명을 인용한다. 기자가 취재원으로 쓸 정도면 그 회사 영업의 얼굴이다.</p>
+    <div class="q"><code>site:thelec.kr "해외영업" OR "영업총괄"</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Athelec.kr+%22%ED%95%B4%EC%99%B8%EC%98%81%EC%97%85%22+OR+%22%EC%98%81%EC%97%85%EC%B4%9D%EA%B4%84%22">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:kipost.net <span class="ph">[회사명]</span> 영업</code>
+      <div class="btns"><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>전시회 부스 담당자 — 연 2회 수확</h3><span class="tag">무대 명단</span></div>
+    <p class="why">세미콘코리아(2월)·SEDEX(10월) 참가업체 명단이 온라인 공개. 부스 컨택 담당자 = 그 회사 영업 실무자. 전시장 직접 방문 시 명함 수확은 덤.</p>
+    <div class="direct">
+      <a target="_blank" href="https://www.semiconkorea.org">SEMICON Korea 참가업체</a>
+      <a target="_blank" href="https://www.sedex.co.kr">SEDEX 참가업체</a>
+    </div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>수출의 탑 수상 기업</h3><span class="tag pdfy">수상 명단</span></div>
+    <p class="why">무역의 날 수출의 탑 수상 기업 = 해외영업이 실제로 성과 내는 회사 지도. 그 회사의 해외영업 조직이 곧 우수 후보 풀.</p>
+    <div class="q"><code>무역의 날 수출의 탑 수상 반도체 filetype:pdf</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=%EB%AC%B4%EC%97%AD%EC%9D%98+%EB%82%A0+%EC%88%98%EC%B6%9C%EC%9D%98+%ED%83%91+%EC%88%98%EC%83%81+%EB%B0%98%EB%8F%84%EC%B2%B4+filetype%3Apdf">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+</section>
+
+<!-- ══════════ 재무회계 ══════════ -->
+<section id="finance">
+  <h2>재무회계 <span class="hint">재무 · 회계 · 자금 · IR</span></h2>
+  <div class="insight">재무는 <b>공시에 이름이 박히는 직무</b>다. DART 공시서류 하단에 작성책임자·IR담당자의 실명과 직통 전화번호가 법적으로 공개된다 — 헤드헌터에게 이만한 원천이 없다.</div>
+
+  <div class="route">
+    <div class="route-head"><h3>DART 공시서류 담당자란</h3><span class="tag pdfy">공시 실명</span></div>
+    <p class="why">타깃사의 최근 주요사항보고서·사업보고서를 열면 표지/말미에 공시책임자(보통 재무·경영지원 임원)와 담당자(실무 과·차장) 이름+전화가 있다. 사업보고서 'Ⅷ. 임원 현황'은 CFO급 서치의 정석.</p>
+    <div class="direct"><a target="_blank" href="https://dart.fss.or.kr">DART 전자공시 바로가기</a></div>
+    <div class="q"><code><span class="ph">[회사명]</span> site:dart.fss.or.kr</code>
+      <div class="btns"><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>링크드인 X-ray — 재무 리더급</h3><span class="tag">공개 프로필</span></div>
+    <div class="q"><code>site:linkedin.com/in "재무팀장" OR "자금팀" 제조 OR 반도체</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%EC%9E%AC%EB%AC%B4%ED%8C%80%EC%9E%A5%22+OR+%22%EC%9E%90%EA%B8%88%ED%8C%80%22+%EC%A0%9C%EC%A1%B0+OR+%EB%B0%98%EB%8F%84%EC%B2%B4">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:linkedin.com/in CPA OR 회계사 "삼일" OR "한영" OR "삼정" 반도체</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+CPA+OR+%ED%9A%8C%EA%B3%84%EC%82%AC+%22%EC%82%BC%EC%9D%BC%22+OR+%22%ED%95%9C%EC%98%81%22+OR+%22%EC%82%BC%EC%A0%95%22+%EB%B0%98%EB%8F%84%EC%B2%B4">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <p class="note">빅4(삼일·한영·삼정·안진) 감사본부 출신 → 산업체 이동 패턴이 재무 서치의 왕도. 회계법인명을 은어처럼 쓴다.</p>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>IR 행사 발표자</h3><span class="tag">무대 명단</span></div>
+    <p class="why">한국IR협의회·거래소 기업설명회 발표자는 그 회사 IR/재무의 대외 얼굴. 상장 준비사(IPO)의 IR 담당은 이직 시장에서 특히 귀하다.</p>
+    <div class="direct"><a target="_blank" href="https://www.kirs.or.kr">한국IR협의회 행사·자료</a></div>
+  </div>
+</section>
+
+<!-- ══════════ 기획 ══════════ -->
+<section id="plan">
+  <h2>기획 <span class="hint">전략기획 · 사업기획 · 경영기획</span></h2>
+  <div class="insight">기획자는 <b>글과 무대에 흔적을 남긴다</b>. 브런치에 산업 분석을 쓰고, 언론 인터뷰에 "전략기획실장"으로 인용되고, 데모데이 연단에 선다.</div>
+
+  <div class="route">
+    <div class="route-head"><h3>브런치 X-ray — 글 쓰는 기획자</h3><span class="tag">커뮤니티/블로그</span></div>
+    <p class="why">사업기획·전략 방법론을 브런치에 연재하는 사람은 검증된 사고력의 소유자. 프로필에 소속·경력 기재가 일반적이다.</p>
+    <div class="q"><code>site:brunch.co.kr "사업기획" OR "전략기획" 반도체 OR 제조</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Abrunch.co.kr+%22%EC%82%AC%EC%97%85%EA%B8%B0%ED%9A%8D%22+OR+%22%EC%A0%84%EB%9E%B5%EA%B8%B0%ED%9A%8D%22+%EB%B0%98%EB%8F%84%EC%B2%B4+OR+%EC%A0%9C%EC%A1%B0">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:careerly.co.kr 전략기획 OR 사업개발</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Acareerly.co.kr+%EC%A0%84%EB%9E%B5%EA%B8%B0%ED%9A%8D+OR+%EC%82%AC%EC%97%85%EA%B0%9C%EB%B0%9C">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>언론 인터뷰 실명 인용</h3><span class="tag pdfy">기사 실명</span></div>
+    <p class="why">신사업·투자 기사에는 "○○사 전략기획실 ○○○ 상무" 인용이 따라온다. Radar 뉴스 트랙에서 잡힌 기사를 이 눈으로 다시 읽으면 후보가 보인다.</p>
+    <div class="q"><code>"<span class="ph">[회사명]</span>" "전략기획" 실장 OR 팀장 -채용</code>
+      <div class="btns"><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>컨설팅펌 출신 X-ray</h3><span class="tag">공개 프로필</span></div>
+    <p class="why">인텔리안 전략기획팀장처럼 신설 조직 리더는 컨설팅펌 → 산업체 이동 트랙에서 나온다. 펌 이름이 곧 검색 은어.</p>
+    <div class="q"><code>site:linkedin.com/in "전략기획" 맥킨지 OR 베인 OR BCG OR 딜로이트</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%EC%A0%84%EB%9E%B5%EA%B8%B0%ED%9A%8D%22+%EB%A7%A5%ED%82%A8%EC%A7%80+OR+%EB%B2%A0%EC%9D%B8+OR+BCG+OR+%EB%94%9C%EB%A1%9C%EC%9D%B4%ED%8A%B8">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+</section>
+
+<!-- ══════════ 구매/SCM ══════════ -->
+<section id="purchase">
+  <h2>구매 / SCM <span class="hint">구매 · 자재 · 공급망</span></h2>
+  <div class="insight">구매는 <b>흔적이 가장 적은 직무</b>다 — 글도 무대도 없다. 여기서만큼은 X-ray보다 <b>리퍼럴(기존 DB 추천 요청)이 1순위 루트</b>이고, 검색은 보조다.</div>
+
+  <div class="route">
+    <div class="route-head"><h3>링크드인 X-ray — 그나마 잡히는 곳</h3><span class="tag">공개 프로필</span></div>
+    <div class="q"><code>site:linkedin.com/in 구매 OR SCM OR procurement 반도체 OR 전자부품</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%EA%B5%AC%EB%A7%A4+OR+SCM+OR+procurement+%EB%B0%98%EB%8F%84%EC%B2%B4+OR+%EC%A0%84%EC%9E%90%EB%B6%80%ED%92%88">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>협력사 등록 공고 담당자</h3><span class="tag pdfy">공고 실명</span></div>
+    <p class="why">대기업·중견사의 협력사 등록/입찰 공고에는 구매 담당 부서·연락처가 명시된다. 담당자 본인이 후보이자, 협력사 쪽 영업·품질 인맥의 허브다.</p>
+    <div class="q"><code>"협력사 등록" 안내 구매 <span class="ph">[산업키워드]</span> filetype:pdf</code>
+      <div class="btns"><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>리퍼럴 공식</h3><span class="tag">기존 DB</span></div>
+    <p class="why">기존 DB의 영업·품질 후보에게 물어라: "귀사 구매팀에서 일 잘하기로 유명한 분?" — 구매는 협력사 영업이 가장 정확하게 평가하는 직무다(매일 상대하니까).</p>
+  </div>
+</section>
+
+<!-- ══════════ 제조/생산/품질 ══════════ -->
+<section id="mfg">
+  <h2>제조 / 생산 / 품질 <span class="hint">생산기술 · 공정 · 품질관리</span></h2>
+  <div class="insight">이 직군의 노다지는 <b>수상 명단</b>이다. 전국품질분임조경진대회 수상 명단에 회사명+참가자 실명이 PDF로 공개된다 — 현장이 검증한 에이스 리스트가 공짜로 있는 셈.</div>
+
+  <div class="route">
+    <div class="route-head"><h3>품질분임조 경진대회 수상 명단</h3><span class="tag pdfy">수상 명단</span></div>
+    <p class="why">금·은상 분임조 명단 = 그 회사 생산·품질 개선의 실제 주역들. 지역예선 명단까지 파면 중견·중소기업 인력이 대거 나온다.</p>
+    <div class="q"><code>전국 품질분임조 경진대회 수상 명단 filetype:pdf</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=%EC%A0%84%EA%B5%AD+%ED%92%88%EC%A7%88%EB%B6%84%EC%9E%84%EC%A1%B0+%EA%B2%BD%EC%A7%84%EB%8C%80%ED%9A%8C+%EC%88%98%EC%83%81+%EB%AA%85%EB%8B%A8+filetype%3Apdf">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="direct"><a target="_blank" href="https://www.ksa.or.kr">한국표준협회(주관기관)</a></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>국가품질상 · 품질경영 유공자</h3><span class="tag pdfy">수상 명단</span></div>
+    <div class="q"><code>국가품질경영대회 유공자 포상 명단 filetype:pdf OR filetype:hwp</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=%EA%B5%AD%EA%B0%80%ED%92%88%EC%A7%88%EA%B2%BD%EC%98%81%EB%8C%80%ED%9A%8C+%EC%9C%A0%EA%B3%B5%EC%9E%90+%ED%8F%AC%EC%83%81+%EB%AA%85%EB%8B%A8+filetype%3Apdf+OR+filetype%3Ahwp">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>링크드인 X-ray — 생산기술·공정</h3><span class="tag">공개 프로필</span></div>
+    <div class="q"><code>site:linkedin.com/in "생산기술" OR "공정기술" 패키징 OR SMT</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%EC%83%9D%EC%82%B0%EA%B8%B0%EC%88%A0%22+OR+%22%EA%B3%B5%EC%A0%95%EA%B8%B0%EC%88%A0%22+%ED%8C%A8%ED%82%A4%EC%A7%95+OR+SMT">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>site:linkedin.com/in "품질" CQE OR 6시그마 OR "블랙벨트" 반도체</code>
+      <div class="btns"><a class="go" target="_blank" href="https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22%ED%92%88%EC%A7%88%22+CQE+OR+6%EC%8B%9C%EA%B7%B8%EB%A7%88+OR+%22%EB%B8%94%EB%9E%99%EB%B2%A8%ED%8A%B8%22+%EB%B0%98%EB%8F%84%EC%B2%B4">검색 실행</a><button onclick="cp(this)">복사</button></div></div>
+    <p class="note">품질 직무 은어: CQE, 블랙벨트, IATF 16949(전장 품질), VDA 6.3 — 자격·규격명이 최고의 필터다.</p>
+  </div>
+</section>
+
+<!-- ══════════ 공통 원천 ══════════ -->
+<section id="common">
+  <h2>공통 원천 <span class="hint">전 직무 겸용</span></h2>
+
+  <div class="route">
+    <div class="route-head"><h3>DART — 임원·연구조직 지도</h3><span class="tag pdfy">공시 실명</span></div>
+    <p class="why">사업보고서의 '임원 현황'(리더급 서치)과 '연구개발 조직'(기술 리더 서치). 타깃기업_DB 12개사 전부 상장사라 즉시 적용.</p>
+    <div class="direct"><a target="_blank" href="https://dart.fss.or.kr">DART 바로가기</a></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>KIPRIS — 특허 발명자</h3><span class="tag pdfy">발명자 실명</span></div>
+    <p class="why">경쟁사 최근 3년 특허의 발명자 = 실제 개발 주역 명단. 도메인 집중도가 특허 이력으로 사전 검증된다.</p>
+    <div class="direct"><a target="_blank" href="http://www.kipris.or.kr">KIPRIS 바로가기</a></div>
+  </div>
+
+  <div class="route">
+    <div class="route-head"><h3>NTIS — 국책과제 참여연구원</h3><span class="tag pdfy">과제 실명</span></div>
+    <p class="why">"정부과제 수행 경험자" 요건이 붙는 포지션의 유일한 정답 루트. 서플러스글로벌 국책과제 매니저류 포지션에 직결.</p>
+    <div class="direct"><a target="_blank" href="https://www.ntis.go.kr">NTIS 바로가기</a></div>
+  </div>
+</section>
+
+<!-- ══════════ 연산자 치트 ══════════ -->
+<section id="ops">
+  <h2>연산자 치트 <span class="hint">모든 검색에 공통</span></h2>
+  <div class="route">
+    <div class="q"><code>site:도메인 — 그 사이트 안에서만 검색 (X-ray의 뼈대)</code><div class="btns"><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>"정확한 문구" — 은어는 반드시 따옴표로 묶는다</code><div class="btns"><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>A OR B — 유의어 묶기 (OR는 대문자)</code><div class="btns"><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>-채용 -구인 -학원 -강의 — 노이즈 제거 (체감 품질 최대 상승)</code><div class="btns"><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>filetype:pdf — 발표자료·명단·보고서만</code><div class="btns"><button onclick="cp(this)">복사</button></div></div>
+    <div class="q"><code>intitle:이력 OR intitle:포트폴리오 — 자기소개 페이지만</code><div class="btns"><button onclick="cp(this)">복사</button></div></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  SJ 소싱 루트북 v1 · 2026-07 · 원칙: 여기서 나온 이름 → 리멤버·링크드인 역검색으로 연락처 결합 → 컨택. 검색 결과가 마르면 은어를 바꾸지 사이트를 바꾸지 말 것.
+</footer>
+
+<script>
+function cp(btn){
+  var code = btn.closest('.q').querySelector('code');
+  var text = code.innerText;
+  function done(){ btn.textContent='복사됨'; btn.classList.add('ok');
+    setTimeout(function(){ btn.textContent='복사'; btn.classList.remove('ok'); }, 1500); }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(); });
+  } else { fallback(); }
+  function fallback(){
+    var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(ta);
+  }
+}
+</script>
+</body>
+</html>
