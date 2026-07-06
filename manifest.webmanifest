@@ -1,0 +1,22 @@
+{
+  "name": "SJ ONE Production",
+  "short_name": "SJ ONE",
+  "description": "헤드헌팅·투자·개인비서 통합 OS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0E13",
+  "theme_color": "#0B0E13",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
