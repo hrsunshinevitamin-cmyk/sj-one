@@ -1,7 +1,7 @@
 import "./style.css";
 
 /* ============================================================
-   SJ ONE PRODUCTION v3.3
+   SJ ONE PRODUCTION v3.4
    업그레이드: 영업(필터+완료체크+대안타깃) · 기업360(구조화+메모)
              투자(원화 손익분해+이벤트+지지/저항) · 비서(5점 루틴+90일)
    데이터 계약(Apps Script payload)은 v3.2와 동일 — 백엔드 수정 불필요
@@ -50,7 +50,7 @@ function kv(k, v) { return v ? `<div class="kv"><b>${esc(k)}</b><span>${esc(v)}<
 
 /* ---------- 레이아웃 ---------- */
 function layout(content, note = "") {
-  return `<div class="app"><header class="top"><div><div class="brand">SJ <b>ONE</b> PRODUCTION <span class="version">v3.3</span></div><div class="sub">영업 · 후보 · 소싱 · 투자 · 개인비서 통합 대시보드</div></div><div class="pillRow"><button class="btn" data-tab="settings">설정</button><button class="btn gold" id="refreshBtn">갱신</button></div></header>${note ? `<div class="notice">${esc(note)}</div>` : ""}${content}<nav class="bottom">${NAV.map(([k, l]) => `<button class="${state.tab === k ? "on" : ""}" data-tab="${k}">${l}</button>`).join("")}</nav></div>`;
+  return `<div class="app"><header class="top"><div><div class="brand">SJ <b>ONE</b> PRODUCTION <span class="version">v3.4</span></div><div class="sub">영업 · 후보 · 소싱 · 투자 · 개인비서 통합 대시보드</div></div><div class="pillRow"><button class="btn" data-tab="settings">설정</button><button class="btn gold" id="refreshBtn">갱신</button></div></header>${note ? `<div class="notice">${esc(note)}</div>` : ""}${content}<nav class="bottom">${NAV.map(([k, l]) => `<button class="${state.tab === k ? "on" : ""}" data-tab="${k}">${l}</button>`).join("")}</nav></div>`;
 }
 function stats() {
   const d = state.data || demo, dy = d.daily || [], os = d.onestop || [], alt = d.alt || [];
@@ -182,6 +182,84 @@ function srLine(cfg, key, cur) {
   return `<div class="kv"><b>지지 / 저항</b><span>${s != null ? s.toLocaleString() : "-"} / ${r != null ? r.toLocaleString() : "-"} ${pos}</span></div>`;
 }
 
+/* ---------- 매크로 메모 (석정님이 직접 유지하는 큰 그림 스냅샷) ---------- */
+const MACRO_DEFAULT = { text: "삼성전자 2분기 잠정 영업익 89.4조(서프라이즈). 다만 코스피 대형주 쏠림으로 코스닥150 소외 지속 리스크. 코스닥 반등 트리거는 지수 자체가 아니라 코스피 대비 상대강도·외국인 코스닥 순매수 전환. 7/10 하이닉스 ADR 상장은 코스피 반도체 수급 이벤트.", at: "2026-07-07 (예시 스냅샷 — 직접 갱신하세요)" };
+const getMacro = () => getLS("sjone_macro", MACRO_DEFAULT);
+
+/* ---------- 전략엔진: 숫자·룰 기반 상황 진단 + 조건부 대응 ----------
+   매수/매도 지시가 아니라 '상태 읽기 + 시나리오별 고려사항'입니다.
+   가격이 갱신될 때마다 이 함수가 다시 돌아 실시간 반영됩니다. */
+function nearPct(cur, level) { return level ? Math.abs(cur - level) / level * 100 : null; }
+
+function analyzePosition(p) {
+  // p: { label, cur, avg, pnlPct, sup, res, unit }
+  const out = { label: p.label, state: [], flags: [], plays: [] };
+  const cur = p.cur, sup = p.sup, res = p.res, pnl = p.pnlPct;
+
+  // 손익 상태
+  let pnlState = "보합";
+  if (pnl != null) { if (pnl <= -3) pnlState = "손실"; else if (pnl >= 3) pnlState = "이익"; }
+  if (pnl != null) out.state.push(`평가손익 ${pnl >= 0 ? "+" : ""}${pnl.toFixed(1)}% (${pnlState})`);
+
+  // 지지/저항 위치
+  let zone = null;
+  if (cur != null) {
+    if (sup != null && cur <= sup) zone = "이탈";
+    else if (res != null && cur >= res) zone = "돌파";
+    else if (sup != null && nearPct(cur, sup) <= 2) zone = "지지근접";
+    else if (res != null && nearPct(cur, res) <= 2) zone = "저항근접";
+    else if (sup != null || res != null) zone = "중립";
+  }
+
+  // 조건부 플레이북
+  if (zone === "이탈") out.plays.push("지지선 아래 — 추격보다 '종가 기준 이탈 확정' 여부부터 확인. 손절 라인을 미리 숫자로 정해두기.");
+  else if (zone === "지지근접") out.plays.push("지지선 근접 — 반등이냐 이탈이냐 분기점. 분할 대응 구간인지, 아니면 관망인지 미리 결정.");
+  else if (zone === "저항근접") out.plays.push("저항선 근접 — 돌파 시 추세 연장, 실패 시 되돌림. 일부 이익실현 규칙을 정해둘 구간.");
+  else if (zone === "돌파") out.plays.push("저항 돌파 — 추세 가능하나 추격은 되돌림 리스크. 신규 진입보다 보유분 관리 관점.");
+  else if (zone === "중립") out.plays.push("지지·저항 사이 — 특별 신호 없음. 이벤트/추세 확인 전까지 무리한 액션 자제.");
+  else out.plays.push("지지/저항선 미설정 — 설정에서 값을 넣으면 이 구간부터 자동 진단됩니다.");
+
+  // 감정매매 편향 플래그
+  if (pnlState === "손실" && (zone === "이탈" || zone === "지지근접"))
+    out.flags.push("처분효과 주의: 손실 구간에서 '조금만 더 버티면' 심리가 손절을 미루게 만듭니다. 미리 정한 라인 지키기.");
+  if (pnlState === "이익" && (zone === "저항근접" || zone === "돌파"))
+    out.flags.push("이익 실현 조급함 주의: 룰 없이 '오를 것 같아서' 홀딩/추가매수 하지 않기.");
+  return out;
+}
+
+function analyzeGmeFx(gPrice, gFx, gTot) {
+  if (gPrice == null) return null;
+  if (gPrice < 0 && gFx > 0 && gTot >= 0)
+    return "환율이 손실을 가려주는 중 — 주가 기준으론 마이너스입니다. 환율 되돌림(원화 강세) 시 손익이 급변할 수 있어, 판단은 주가 요인 기준으로.";
+  if (gPrice < 0 && gFx > 0)
+    return "환율이 주가 손실을 일부 방어 중 — 다만 합계는 아직 마이너스입니다. 원화 강세로 돌면 손실이 더 커질 수 있으니 주가 요인 기준으로 판단.";
+  if (gPrice > 0 && gFx < 0)
+    return "환율이 수익을 갉아먹는 중 — 주가는 벌었지만 원화 강세가 상쇄. 환헤지/환전 타이밍 관점 점검.";
+  if (gPrice > 0 && gFx > 0) return "주가·환율 동반 우호 구간 — 다만 두 요인이 함께 되돌려질 때 변동폭도 커집니다.";
+  return "주가·환율 모두 비우호 — 원인이 종목인지 환율인지 분리해서 볼 것.";
+}
+
+function eventRisks() {
+  return getEvents().map(e => ({ ...e, dd: dday(e.date) }))
+    .filter(e => { const t = new Date(todayKey()), d = new Date(e.date); const diff = Math.round((d - t) / 86400000); return diff >= 0 && diff <= 7; });
+}
+
+function strategyPanel(kAn, gAn, gFxMsg, totAll) {
+  const evs = eventRisks();
+  const block = an => `<div class="stratItem"><div class="stratHead">${esc(an.label)}</div>
+    ${an.state.length ? `<div class="stratState">${an.state.map(s => esc(s)).join(" · ")}</div>` : ""}
+    <ul class="stratList">${an.plays.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+    ${an.flags.map(f => `<div class="flagLine">⚠ ${esc(f)}</div>`).join("")}</div>`;
+  return `<section class="card stratCard"><div class="sectionTitle">전략 진단 <span class="muted" style="font-weight:700;font-size:12px">· 가격 갱신 시 자동 재분석</span></div>
+    <div class="disclaimer">매수/매도 추천이 아닙니다. 숫자·룰로 상황을 읽어주는 계기판이며, 최종 판단·투자책임은 본인에게 있습니다.</div>
+    ${totAll != null ? `<div class="stratState" style="margin:10px 0">포트폴리오 총 평가손익 <b class="${totAll >= 0 ? "profit" : "loss"}">${signWon(totAll)}</b> · 코스닥ETF + 미국주식(환노출) 2축. 한쪽 쏠림/환노출 크기 정기 점검.</div>` : ""}
+    ${block(kAn)}
+    ${block(gAn)}
+    ${gFxMsg ? `<div class="flagLine fx">↔ ${esc(gFxMsg)}</div>` : ""}
+    ${evs.length ? `<div class="stratHead" style="margin-top:12px">임박 이벤트 (7일 내)</div><ul class="stratList">${evs.map(e => `<li><b>${esc(e.dd)}</b> ${esc(e.label)} — 변동성 확대 가능. 이벤트 전 포지션 크기 점검.</li>`).join("")}</ul>` : `<div class="muted" style="margin-top:10px">7일 내 등록 이벤트 없음</div>`}
+  </section>`;
+}
+
 function investment() {
   const inv = state.data.investments || demo.investments;
   const cfg = getInvCfg();
@@ -208,10 +286,24 @@ function investment() {
   const totAll = (kPnl != null && gTot != null) ? kPnl + gTot : null;
   const events = getEvents();
 
+  /* 전략엔진 입력 구성 */
+  const kAn = analyzePosition({ label: "KODEX 코스닥150", cur: kCur, avg: kAvg, pnlPct: kPct, sup: num(cfg.sup.kodex), res: num(cfg.res.kodex) });
+  const gAn = analyzePosition({ label: "GME", cur: gCur, avg: gAvg, pnlPct: gPct, sup: num(cfg.sup.gme), res: num(cfg.res.gme) });
+  const gFxMsg = analyzeGmeFx(gPrice, gFx, gTot);
+  const macro = getMacro();
+
   return `<main class="grid">
     <section class="card hero"><div class="eyebrow">Investment Desk</div><h1>총 평가손익 <span class="${totAll == null ? "" : totAll >= 0 ? "profit" : "loss"}">${totAll == null ? "연결 필요" : signWon(totAll)}</span></h1>
       <p>추천 매수/매도가 아니라 감정매매 차단용 계기판입니다. 모든 손익은 원화 기준.</p>
       <div class="actionBox">${state.data.live ? "실시간 연결됨: " + esc(state.data.updatedAt) : "실시간 연결 전: 설정에서 Apps Script 웹앱 URL 저장 후 갱신"}</div>
+    </section>
+
+    ${strategyPanel(kAn, gAn, gFxMsg, totAll)}
+
+    <section class="card"><div class="sectionTitle">매크로 메모 <span class="muted" style="font-weight:700;font-size:12px">· 큰 그림 스냅샷 (직접 유지)</span></div>
+      <p class="muted">시장 상황 요약을 직접 적어두면 전략 진단과 함께 매번 같이 봅니다. 실시간 시세는 아니고, 석정님이 갱신하는 메모입니다.</p>
+      <textarea id="macroBox" placeholder="예: 코스닥 대형주 쏠림 지속 여부, 삼성 실적 낙수, 환율 방향...">${esc(macro.text)}</textarea>
+      <div class="row" style="margin-top:8px;align-items:center"><span class="muted">${macro.at ? "마지막 갱신: " + esc(macro.at) : "저장된 메모 없음"}</span><button class="btn gold" id="saveMacro">메모 저장</button></div>
     </section>
 
     <section class="grid2">
@@ -395,6 +487,11 @@ function bind() {
     cfg.sup = { kodex: num($("#cfgKSup").value), gme: num($("#cfgGSup").value) };
     cfg.res = { kodex: num($("#cfgKRes").value), gme: num($("#cfgGRes").value) };
     setLS("sjone_inv_cfg", cfg); render("투자 설정 저장됨");
+  };
+  const smac = $("#saveMacro");
+  if (smac) smac.onclick = () => {
+    setLS("sjone_macro", { text: $("#macroBox").value, at: new Date().toLocaleString("ko-KR") });
+    render("매크로 메모 저장됨");
   };
   const ae = $("#addEvent");
   if (ae) ae.onclick = () => {
